@@ -31,12 +31,13 @@ userRouter.post("/metadata", async(req, res) => {
 
 userRouter.get("/metadata/bulk", async(req, res) => {
     try {
-        const userIdString = GetMetaDataBulkSchema.safeParse(req.query.ids ?? "[]");
+        const userIdString = GetMetaDataBulkSchema.safeParse(req.query.ids);
         if(!userIdString.success) {
-        throw new Error();
+            console.log("yahan lag gaye")
+            throw new Error();
         }
 
-        const userIds = userIdString.data?.idString.slice(1, userIdString.data.idString.length - 1).split(",");
+        const userIds = (userIdString.data).slice(1, userIdString.data.length - 1).split(",");
 
         const metadata = await client.user.findMany({
             where: {

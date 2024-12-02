@@ -38,6 +38,7 @@ router.post("/signup", async(req, res) => {
             role: user.role
         }, JWT_SECRET);
         res.json({
+            userId: user.id,
             token
         })
         return
@@ -50,7 +51,7 @@ router.post("/signup", async(req, res) => {
 })
 
 
-router.post('/signin', async(req, res) => {
+router.post("/signin", async(req, res) => {
     const parsedInput = SiginSchema.safeParse(req.body);
     if(!parsedInput.success) {
         res.status(403).json({

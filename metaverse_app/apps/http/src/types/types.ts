@@ -23,9 +23,7 @@ export const UpdateMetaDataSchema = z.object({
     avatarId: z.string()
 })
 
-export const GetMetaDataBulkSchema = z.object({
-    idString: z.string()
-})
+export const GetMetaDataBulkSchema =  z.string()
 
 export const CreateSpaceSchema = z.object({
     name: z.string(),

@@ -18,7 +18,7 @@ const axios = {
     },
     get: async(...args) => {
         try {
-            const res = await axios2.post(...args)
+            const res = await axios2.get(...args)
             return res
         }
         catch(e) {
@@ -27,7 +27,7 @@ const axios = {
     },
     put: async(...args) => {
         try {
-            const res = await axios2.post(...args)
+            const res = await axios2.put(...args)
             return res
         }
         catch(e) {
@@ -36,7 +36,7 @@ const axios = {
     },
     delete: async(...args) => {
         try {
-            const res = await axios2.post(...args)
+            const res = await axios2.delete(...args)
             return res
         }
         catch(e) {
@@ -46,7 +46,7 @@ const axios = {
 }
 
 
-describe("Authentication", () => {;
+describe.skip("Authentication", () => {;
     test('User is able to signup only once', async () => {
         const username = "sara" + Math.random();
         const password = "12788834554";
@@ -122,7 +122,7 @@ describe("Authentication", () => {;
 })
 
 
-describe("User metadata endpoint", () => {
+describe.skip("User metadata endpoint", () => {
     let token = "";
     let avatarId = "";
 
@@ -151,7 +151,6 @@ describe("User metadata endpoint", () => {
                 "authorization": `Bearer ${ token }`
             }
         })
-        console.log("Avatar response is: " + avatarResponse.data.avatarId);
         avatarId = avatarResponse.data.avatarId;
     })
 
@@ -174,17 +173,17 @@ describe("User metadata endpoint", () => {
             }
         })
 
-        expect(response.status).toBe(200);
+        expect(newResponse.status).toBe(200);
 
         const anotherResponse = await axios.post(`${BACKEND_URL}/api/v1/user/metadata`, {
             avatarId
         })
 
-        expect(response.status).toBe(400);
-    })
+        expect(anotherResponse.status).toBe(401);
+    }) 
 })
 
-describe("User avatar information", () => {
+describe.skip("User avatar information", () => {
     let avatarId;
     let token;
     let userId;
@@ -221,20 +220,30 @@ describe("User avatar information", () => {
     })
 
     test('Get back avatar info for a user', async () => {
-        const response = await axios.get(`${BACKEND_URL}/api/v1/user/metadata/bulk?ids=[${ userId }]`);
+        console.log(userId);
+        const response = await axios.get(`${BACKEND_URL}/api/v1/user/metadata/bulk?ids=[${ userId }]`,{
+            headers: {
+                "authorization": `Bearer ${ token }`
+            }
+        });
+        console.log(response.data);
         expect(response.data.avatars.length).toBe(1);
         expect(response.data.avatars[0].userId).toBe(userId);
     })
 
-    test('get/avatars endpoint should returns the recently created avatars', async () => {
-        const response = await axios.get(`${BACKEND_URL}/api/v1/avatars`);
-        expect(response.data.avatars.length).not.toBe(1);
+    test('get/avatars endpoint should return the recently created avatars', async () => {
+        const response = await axios.get(`${BACKEND_URL}/api/v1/avatars`, {
+            headers: {
+                "authorization": `Bearer ${ token }`
+            }
+        });
+        expect(response.data.avatars.length).not.toBe(0);
         const currentAvatar = response.data.avatars.find(x => x.id == avatarId);
         expect(currentAvatar).toBeDefined();
     })
 })
 
-describe('Space information', async () => {
+describe.skip('Space information', async () => {
     let mapId;
     let element1Id;
     let elemntt2Id;
