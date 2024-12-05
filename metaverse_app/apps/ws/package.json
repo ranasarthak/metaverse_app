@@ -8,5 +8,22 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/websocket": "^1.0.10",
+    "jsonwebtoken": "^9.0.2",
+    "ty": "^0.0.1",
+    "websocket": "^1.0.35",
+    "ws": "^1.0.0"
+  },
+  "devDependencies": {
+    "@repo/db/client": "*",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.1",
+    "@types/ws": "^8.5.13",
+    "express": "^4.21.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
 }
