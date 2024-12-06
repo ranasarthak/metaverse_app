@@ -1,9 +1,6 @@
 const axios2 = require("axios");
-const { log } = require("console");
-const { describe } = require("node:test");
-const { type } = require("os");
 
-const BACKEND_URL = "http://localhost:3000"
+const BACKEND_URL = "http://localhost:3000/api/v1"
 const WS_URL = "ws://localhost:3001"
 
 const axios = {
@@ -46,17 +43,17 @@ const axios = {
 }
 
 
-describe.skip("Authentication", () => {;
+describe.skip("Authentication", () => {
     test('User is able to signup only once', async () => {
         const username = "sara" + Math.random();
         const password = "12788834554";
-        const response = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
+        const response = await axios.post(`${BACKEND_URL}/signup`, {
             username,
             password,
             type: "admin"
         })
         expect(response.status).toBe(200);
-        const updatedResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
+        const updatedResponse = await axios.post(`${BACKEND_URL}/signup`, {
             username,
             password,
             type: "admin"
@@ -67,12 +64,12 @@ describe.skip("Authentication", () => {;
     test('Signup fails if username/password is emppty', async () => {
         const username = `rana - ${ Math.random() }`;
         const password = "1278883485438";
-        const response = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
+        const response = await axios.post(`${BACKEND_URL}/signup`, {
             password
         })
 
         expect(response.status).toBe(400);
-        const updatedResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
+        const updatedResponse = await axios.post(`${BACKEND_URL}/signup`, {
             username
         })
 
@@ -82,13 +79,13 @@ describe.skip("Authentication", () => {;
     test('Successful signin and token generation post signup', async () => {
         const username = `rana - ${ Math.random() }`;
         const password = "13788844983";
-        await axios.post(`${BACKEND_URL}/api/v1/signup`, {
+        await axios.post(`${BACKEND_URL}/signup`, {
             username,
             password,
             type: "admin"
         })
 
-        const response = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
+        const response = await axios.post(`${BACKEND_URL}/signin`, {
             username,
             password
         })
@@ -100,19 +97,19 @@ describe.skip("Authentication", () => {;
     test ('Sigin fails with wrong username/password', async () => {
         const username = `rana - ${Math.random()}`;
         const password = '3278884893123';
-        await axios.post(`${BACKEND_URL}/api/v1/signup`, {
+        await axios.post(`${BACKEND_URL}/signup`, {
             username,
             password,
             type: 'admin'
         })
 
-        const response = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
+        const response = await axios.post(`${BACKEND_URL}/signin`, {
             username: "WrongUsername",
             password
         })
 
         expect(response.status).toBe(403);
-        const secondResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
+        const secondResponse = await axios.post(`${BACKEND_URL}/signin`, {
             username,
             password: "WrongPassword"
         })
@@ -130,20 +127,20 @@ describe.skip("User metadata endpoint", () => {
         const username = `rana-${ Math.random() }`;
         const password = '2378884343434';
 
-        await axios.post(`${BACKEND_URL}/api/v1/signup`, {
+        await axios.post(`${BACKEND_URL}/signup`, {
             username,
             password,
             type: 'admin'
         })
 
-        const response = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
+        const response = await axios.post(`${BACKEND_URL}/signin`, {
             username,
             password
         })
 
         token = response.data.token;
 
-        const avatarResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/avatar`, {
+        const avatarResponse = await axios.post(`${BACKEND_URL}/admin/avatar`, {
             "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
             "name": "Timmy"
         }, {
@@ -155,7 +152,7 @@ describe.skip("User metadata endpoint", () => {
     })
 
     test('Users should b able to update their metadata with only the right avatarId and token', async () => {
-        const response = await axios.post(`${BACKEND_URL}/api/v1/user/metadata`, {
+        const response = await axios.post(`${BACKEND_URL}/user/metadata`, {
             avatarId: '343434'
         }, {
             headers : {
@@ -165,7 +162,7 @@ describe.skip("User metadata endpoint", () => {
 
         expect(response.status).toBe(400);
 
-        const newResponse = await axios.post(`${BACKEND_URL}/api/v1/user/metadata`, {
+        const newResponse = await axios.post(`${BACKEND_URL}/user/metadata`, {
             avatarId
         }, {
             headers : {
@@ -175,7 +172,7 @@ describe.skip("User metadata endpoint", () => {
 
         expect(newResponse.status).toBe(200);
 
-        const anotherResponse = await axios.post(`${BACKEND_URL}/api/v1/user/metadata`, {
+        const anotherResponse = await axios.post(`${BACKEND_URL}/user/metadata`, {
             avatarId
         })
 
@@ -192,7 +189,7 @@ describe.skip("User avatar information", () => {
         const username = `rana-${ Math.random() }`;
         const password = '234343434';
 
-        const signUpResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
+        const signUpResponse = await axios.post(`${BACKEND_URL}/signup`, {
             username,
             password,
             type: 'admin'
@@ -200,14 +197,14 @@ describe.skip("User avatar information", () => {
 
         userId = signUpResponse.data.userId;
 
-        const signInResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
+        const signInResponse = await axios.post(`${BACKEND_URL}/signin`, {
             username,
             password
         })
 
         token = signInResponse.data.token;
 
-        const avatarResponse = await axios.post(`${BACKEND_URL}/api/v1/admin/avatar`, {
+        const avatarResponse = await axios.post(`${BACKEND_URL}/admin/avatar`, {
             "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQm3RFDZM21teuCMFYx_AROjt-AzUwDBROFww&s",
             "name": "Timmy"
         }, {
@@ -221,7 +218,7 @@ describe.skip("User avatar information", () => {
 
     test('Get back avatar info for a user', async () => {
         console.log(userId);
-        const response = await axios.get(`${BACKEND_URL}/api/v1/user/metadata/bulk?ids=[${ userId }]`,{
+        const response = await axios.get(`${BACKEND_URL}/user/metadata/bulk?ids=[${ userId }]`,{
             headers: {
                 "authorization": `Bearer ${ token }`
             }
@@ -232,7 +229,7 @@ describe.skip("User avatar information", () => {
     })
 
     test('get/avatars endpoint should return the recently created avatars', async () => {
-        const response = await axios.get(`${BACKEND_URL}/api/v1/avatars`, {
+        const response = await axios.get(`${BACKEND_URL}/avatars`, {
             headers: {
                 "authorization": `Bearer ${ token }`
             }
@@ -243,10 +240,10 @@ describe.skip("User avatar information", () => {
     })
 })
 
-describe.skip('Space information', async () => {
+describe('Space information', () => {
     let mapId;
     let element1Id;
-    let elemntt2Id;
+    let element2Id;
     let adminToken;
     let adminId;
     let userToken;
@@ -256,7 +253,7 @@ describe.skip('Space information', async () => {
         const username = `rana-${ Math.random() }`;
         const password = '234343434';
 
-        const adminSignUpResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
+        const adminSignUpResponse = await axios.post(`${BACKEND_URL}/signup`, {
             username,
             password,
             type: 'admin'
@@ -264,29 +261,143 @@ describe.skip('Space information', async () => {
 
         adminId = adminSignUpResponse.data.userId;
 
-        const adminSignInResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
+        const adminSignInResponse = await axios.post(`${BACKEND_URL}/signin`, {
             username,
             password
         })
 
         adminToken = adminSignInResponse.data.token;
 
-        const userSignUpResponse = await axios.post(`${BACKEND_URL}/api/v1/signup`, {
+        const userSignUpResponse = await axios.post(`${BACKEND_URL}/signup`, {
             username:'user' + username,
             password,
             type: 'user'
         })
 
-        userId = signUpResponse.data.userId;
+        userId = userSignUpResponse.data.userId;
 
-        const UserSignInResponse = await axios.post(`${BACKEND_URL}/api/v1/signin`, {
+        const UserSignInResponse = await axios.post(`${BACKEND_URL}/signin`, {
             username: 'user' + username,
             password
         })
 
         userToken = UserSignInResponse.data.token;
 
-        const element1Response = await axios.post()
+        const element1Response = await axios.post(`${BACKEND_URL}/admin/element`, {
+            "imageUrl": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
+            "width": 1,
+            "height": 1,
+            "static": true
+        }, {
+            headers: {
+                authorization: `Bearer ${adminToken}`
+            }
+        })
+
+        const element2Response = await axios.post(`${BACKEND_URL}/admin/element`, {
+            "imageUrl": "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRCRca3wAR4zjPPTzeIY9rSwbbqB6bB2hVkoTXN4eerXOIkJTG1GpZ9ZqSGYafQPToWy_JTcmV5RHXsAsWQC3tKnMlH_CsibsSZ5oJtbakq&usqp=CAE",
+            "width": 1,
+            "height": 1,
+            "static": true
+        }, {
+            headers: {
+                authorization: `Bearer ${adminToken}`
+            }
+        })
+        element1Id = element1Response.data.id;
+        element2Id = element2Response.data.id;
+        
+        const mapResponse = await axios.post(`${BACKEND_URL}/admin/map`, {
+            "thumbnail": "https://thumbnail.com/a.png",
+            "dimensions": "100x200",
+            "name": "Test space",
+            "defaultElements": [{
+                elementId: element1Id,
+                x: 20,
+                y: 20
+            },{
+                elementId: element1Id,
+                x: 10,
+                y: 20
+            },{
+                elementId: element2Id,
+                x: 15,
+                y: 20
+            }]
+        }, {
+            headers: {
+                authorization: `Bearer ${adminToken}`
+            }
+        })
+
+        mapId = mapResponse.data.id;
+    })
+
+    test("User is able to create a space", async() => {
+      const response = await axios.post(`${BACKEND_URL}/space`, {
+        "name": "Test",
+        "dimensions": "200x300",
+        "mapId": mapId
+      }, {
+        headers: {
+            authorization: `Bearer ${userToken}`
+        }
+      });
+      expect(response.status).toBe(200);
+      expect(response.data.spaceId).toBeDefined();
+    })
+
+    test("User is able to create a space without mapId (empty space)", async() => {
+        const response = await axios.post(`${BACKEND_URL}/space`, {
+          "name": "Test",
+          "dimensions": "200x300"
+        }, {
+          headers: {
+              authorization: `Bearer ${userToken}`
+          }
+        });
+        expect(response.status).toBe(200);
+        expect(response.data.spaceId).toBeDefined();
+    })
+
+    test("User is not able to create a space wihtout a mapId and dimensions", async() => {
+        const response = await axios.post(`${BACKEND_URL}/space`, {
+          "name": "Test"
+        }, {
+          headers: {
+              authorization: `Bearer ${userToken}`
+          }
+        });
+        expect(response.status).toBe(400);
+    })
+
+    test("User shouldnt be able to delete a space which doesnt exist", async () => {
+        const response = await axios.delete(`${BACKEND_URL}/space/randomSpaceId`, {
+            headers: {
+                authorization: `Bearer ${userToken}`
+            }
+        });
+        expect(response.status).toBe(400);
+    })
+
+    test("User is able to delete a space that does exist", async () => {
+        console.log("this is userToken", userToken);
+        const response = await axios.post(`${BACKEND_URL}/space`, {
+            "name": "test",
+            "dimensions": "200x300"
+        }, {
+            headers: {
+                authorization: `Bearer ${userToken}`
+            }
+        })
+
+        const deleteResponse = await axios.delete(`${BACKEND_URL}/space/${response.data.spaceId}`, {
+            headers: {
+                authorization: `Bearer ${userToken}`
+            }
+        })
+        console.log(deleteResponse);
+        expect(deleteResponse.status).toBe(200);
     })
 })
 

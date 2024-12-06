@@ -4,8 +4,9 @@ import { AddElementSchema, CreateSpaceSchema, DeleteElementSchema } from "../typ
 import client from "@repo/db/client"
 
 export const spaceRouter = Router();
+spaceRouter.use(userMiddleware);
 
-spaceRouter.post("/", userMiddleware, async(req, res) => {
+spaceRouter.post("/", async(req, res) => {
     const parsedInput = CreateSpaceSchema.safeParse(req.body);
     if(!parsedInput.success) {
         res.status(400).json({
@@ -69,6 +70,7 @@ spaceRouter.post("/", userMiddleware, async(req, res) => {
         res.json({
             spaceId: space.id
         })
+        return
     } catch (error) {
         res.status(400).json({
             message: "Space creation failed"
@@ -76,7 +78,7 @@ spaceRouter.post("/", userMiddleware, async(req, res) => {
     }
 })
 
-spaceRouter.get("/:spaceId", userMiddleware, async(req, res) => {
+spaceRouter.get("/:spaceId", async(req, res) => {
     try {
         const space = await client.space.findUnique({
             where: {
@@ -112,6 +114,7 @@ spaceRouter.get("/:spaceId", userMiddleware, async(req, res) => {
                 y: e.y
             }))
         })
+        return
     } catch (error) {
         res.status(400).json({
             message: "Unable to fetch the requested space"
@@ -119,7 +122,7 @@ spaceRouter.get("/:spaceId", userMiddleware, async(req, res) => {
     }
 })
 
-spaceRouter.get("/all", userMiddleware, async(req, res) => {
+spaceRouter.get("/all", async(req, res) => {
     try {
         const spaces = await client.space.findMany({
             where: {
@@ -131,6 +134,7 @@ spaceRouter.get("/all", userMiddleware, async(req, res) => {
             res.status(400).json({
                 message: "No space for this account"
             })
+            return;
         }
 
         res.json({
@@ -141,6 +145,7 @@ spaceRouter.get("/all", userMiddleware, async(req, res) => {
                 dimensions: `${s.width}x${s.height}`
             }))
         })
+        return;
     } catch (error) {
         res.status(400).json({
             message: "Unable to fetch the requested spaces"
@@ -148,12 +153,13 @@ spaceRouter.get("/all", userMiddleware, async(req, res) => {
     }
 })
 
-spaceRouter.post("/element", userMiddleware, async(req, res) => {
+spaceRouter.post("/element", async(req, res) => {
     const parsedInput = AddElementSchema.safeParse(req.body);
     if(!parsedInput.success) {
         res.status(400).json({
             message: "Invalid inputs"
         })
+        return;
     }
 
     try {
@@ -179,6 +185,7 @@ spaceRouter.post("/element", userMiddleware, async(req, res) => {
             res.status(400).json({
                 message: "Out of bounds"
             })
+            return;
         }
 
         const spaceElement = await client.spaceElements.create({
@@ -242,6 +249,7 @@ spaceRouter.delete("/element", async(req, res) => {
         res.json({
             message: "Element deleted"
         })
+        return;
     } catch (error) {
         res.status(400).json({
             message: "Deletion failed"
@@ -265,8 +273,9 @@ spaceRouter.delete("/:spaceId", async(req, res) => {
             return
         }
 
-        if(space.creatorId !== req.userId) {
+        if(space.creatorId != req.userId) {
             res.status(403).json({ message: "Unauthorised"})
+            return
         }
 
         await client.space.delete({

@@ -109,5 +109,4 @@ export class User {
         }, this.spaceId!, this );
         RoomManager.getInstance().removeUser(this, this.spaceId!);
     }
-   
 }
