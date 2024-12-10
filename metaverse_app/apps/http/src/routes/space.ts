@@ -39,7 +39,6 @@ spaceRouter.post("/", async(req, res) => {
                 height: true
             }
         })
-
         if(!map) {
             res.status(400).json({
                 message: "Map not found"
@@ -60,7 +59,7 @@ spaceRouter.post("/", async(req, res) => {
             await client.spaceElements.createMany({
                 data: map.elements.map(e => ({
                     spaceId: space.id,
-                    elementId: e.id,
+                    elementId: e.elementId,
                     x: e.x!,
                     y: e.y!
                 }))
@@ -74,6 +73,37 @@ spaceRouter.post("/", async(req, res) => {
     } catch (error) {
         res.status(400).json({
             message: "Space creation failed"
+        })
+    }
+})
+
+spaceRouter.get("/all", async(req, res) => {
+    try {
+        const spaces = await client.space.findMany({
+            where: {
+                creatorId: req.userId
+            }
+        })
+
+        if(!spaces) {
+            res.status(400).json({
+                message: "No space for this account"
+            })
+            return;
+        }
+
+        res.json({
+            spaces: spaces.map(s => ({
+                id: s.name,
+                name: s.name,
+                thumbnail: s.thumbnail,
+                dimensions: `${s.width}x${s.height}`
+            }))
+        })
+        return;
+    } catch (error) {
+        res.status(400).json({
+            message: "Unable to fetch the requested spaces"
         })
     }
 })
@@ -118,37 +148,6 @@ spaceRouter.get("/:spaceId", async(req, res) => {
     } catch (error) {
         res.status(400).json({
             message: "Unable to fetch the requested space"
-        })
-    }
-})
-
-spaceRouter.get("/all", async(req, res) => {
-    try {
-        const spaces = await client.space.findMany({
-            where: {
-                creatorId: req.userId
-            }
-        })
-
-        if(!spaces) {
-            res.status(400).json({
-                message: "No space for this account"
-            })
-            return;
-        }
-
-        res.json({
-            spaces: spaces.map(s => ({
-                id: s.name,
-                name: s.name,
-                thumbnail: s.thumbnail,
-                dimensions: `${s.width}x${s.height}`
-            }))
-        })
-        return;
-    } catch (error) {
-        res.status(400).json({
-            message: "Unable to fetch the requested spaces"
         })
     }
 })

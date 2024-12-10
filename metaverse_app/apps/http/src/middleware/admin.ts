@@ -3,15 +3,18 @@ import { JWT_SECRET } from "../config";
 import jwt from "jsonwebtoken";
 
 export default function adminMiddleware (req: Request, res: Response, next: NextFunction){
+    // console.log("usertoken: ", req.headers.authorization);
     try {
         const token = req.headers.authorization?.split(" ")[1];
         if(!token){
-            throw new Error();
+            res.status(403).json({message: "Unauthorized"})
+            return;
         }
 
         const decoded = jwt.verify( token, JWT_SECRET ) as { userId: string, role: string };
         if(decoded.role != "Admin") {
-            throw new Error();
+            res.status(403).json({message: "Unauthorized"})
+            return;
         }
         
         req.userId = decoded.userId;

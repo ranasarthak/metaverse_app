@@ -24,7 +24,7 @@ adminRouter.post("/element", async(req, res) => {
         })
     
         res.json({ 
-            elementId: element.id 
+            id: element.id 
         });
         return;
     } catch (error) {
@@ -102,6 +102,9 @@ adminRouter.post("/map", async(req, res) => {
                         y: e.y
                     }))
                 }
+            },
+            include: {
+                elements: true
             }
         })
     
